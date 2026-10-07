@@ -16,6 +16,18 @@ const nextConfig: NextConfig = {
       },
     },
   },
+
+  // for Image Optimization
+
+   images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "ichef.bbci.co.uk",
+      },
+    ],
+  },
+
 };
 
 export default nextConfig;
