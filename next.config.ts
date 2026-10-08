@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "ichef.bbci.co.uk",
+        hostname: "api.api-store.workers.dev",
       },
     ],
   },

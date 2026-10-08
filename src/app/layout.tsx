@@ -5,6 +5,7 @@ import Header from "@/component/Header";
 import { Suspense } from "react";
 
 
+
 const notoSerifBengali = Noto_Serif_Bengali({
   subsets: ["bengali"],
 });
@@ -17,9 +18,10 @@ export default function RootLayout({
   return (
     <html lang="bn">
       <body className={notoSerifBengali.className}>
-    <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div>Loading...</div>}>
       <Header />
     </Suspense>
+    
         {children}
       </body>
     </html>
