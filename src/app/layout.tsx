@@ -2,6 +2,7 @@
 import { Noto_Serif_Bengali } from "next/font/google";
 import "./globals.css";
 import Header from "@/component/Header";
+import { Suspense } from "react";
 
 
 const notoSerifBengali = Noto_Serif_Bengali({
@@ -16,8 +17,9 @@ export default function RootLayout({
   return (
     <html lang="bn">
       <body className={notoSerifBengali.className}>
-        <Header />
-    
+    <Suspense fallback={<div>Loading...</div>}>
+      <Header />
+    </Suspense>
         {children}
       </body>
     </html>
