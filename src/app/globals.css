@@ -1,2 +1,111 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+.marquee-container {
+    width: 100%;
+    overflow: hidden;
+    border-block: 1px solid #f9fafb;
+    background: #c5f3ba ;
+}
+
+.marquee-track {
+    display: flex;
+    width: max-content;
+    animation: bazar-scroll 35s linear infinite;
+    will-change: transform;
+}
+
+.marquee-group {
+    display: flex;
+    flex: 0 0 auto;
+    width: max-content;
+}
+
+.marquee-item {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-right: 1px solid #e5e7eb;
+    font-size: 14px;
+}
+
+.marquee-icon {
+    display: inline-flex;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 22px;
+}
+
+.marquee-product-image {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.marquee-name {
+    white-space: nowrap;
+    color: #374151;
+    font-weight: 500;
+}
+
+.marquee-price {
+    white-space: nowrap;
+    color: #111827;
+    font-weight: 700;
+}
+
+.marquee-change {
+    white-space: nowrap;
+    font-weight: 700;
+}
+
+.price-up {
+    color: #16a34a;
+}
+
+.price-down {
+    color: #dc2626;
+}
+
+.price-neutral {
+    color: #6b7280;
+}
+
+.marquee-container:hover .marquee-track {
+    animation-play-state: paused;
+}
+
+@keyframes bazar-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 640px) {
+    .marquee-track {
+        animation-duration: 28s;
+    }
+
+    .marquee-item {
+        gap: 6px;
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+        animation: none;
+        will-change: auto;
+    }
+}

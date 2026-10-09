@@ -19,13 +19,11 @@ const NavLinks = ({ categories }: NavLinksProps) => {
   const pathname = usePathname();
 
   return (
-    <nav className="border-t border-gray-100 bg-white">
-      <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 overflow-x-auto px-4 py-3">
-        
+    <nav className="border-t border-gray-100 ">
+      <div className="mx-auto flex max-w-4xl bg-emerald-100 m-10 shadow-xl rounded-2xl items-center justify-center gap-2 overflow-x-auto px-4 py-3">
         {/* Categories */}
         {categories.map((category) => {
-          const isActive =
-            pathname === `/category/${category.slug}`;
+          const isActive = pathname === `/category/${category.slug}`;
 
           return (
             <Link
@@ -34,12 +32,10 @@ const NavLinks = ({ categories }: NavLinksProps) => {
               className={`flex items-center gap-1 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium transition ${
                 isActive
                   ? "bg-red-50 text-red-700"
-                  : "text-gray-700 hover:bg-red-50 hover:text-red-700"
+                  : "text-gray-700 hover:bg-green-300 hover:text-black"
               }`}
             >
-              {category.icon && (
-                <span>{category.icon}</span>
-              )}
+              {category.icon && <span>{category.icon}</span>}
 
               <span>{category.nameBn}</span>
             </Link>
