@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 interface Category {
-  id: string;
+  id: string | number ;
   slug: string;
   icon?: string;
   nameBn: string;
