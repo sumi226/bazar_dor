@@ -1,5 +1,4 @@
-
-
+import Image from "next/image";
 import Link from "next/link";
 
 export interface Product {
@@ -74,16 +73,14 @@ export function getChange(product: Product): number {
     if (value !== null) return value;
   }
 
-  const current = readNumber(
-    item.today ?? item.priceBn ?? item.price
-  );
+  const current = readNumber(item.today ?? item.priceBn ?? item.price);
 
   const previous = readNumber(
     item.yesterday ??
       item.yesterdayPrice ??
       item.previousPrice ??
       item.oldPrice ??
-      item.previous_price
+      item.previous_price,
   );
 
   if (current !== null && previous !== null && previous > 0) {
@@ -93,14 +90,10 @@ export function getChange(product: Product): number {
   return 0;
 }
 
-export function getDirection(
-  product: Product
-): "up" | "down" | "flat" {
+export function getDirection(product: Product): "up" | "down" | "flat" {
   const item = product as Record<string, unknown>;
 
-  const raw = String(
-    item.dir ?? item.direction ?? item.trend ?? ""
-  )
+  const raw = String(item.dir ?? item.direction ?? item.trend ?? "")
     .toLowerCase()
     .trim();
 
@@ -193,16 +186,10 @@ function getEmoji(product: Product, name: string): string {
   return "🛒";
 }
 
-export default function GroceryCard({
-  product,
-}: {
-  product: Product;
-}) {
-  const name =
-    product.nameBn ?? product.name ?? product.title ?? "নাম নেই";
+export default function GroceryCard({ product }: { product: Product }) {
+  const name = product.nameBn ?? product.name ?? product.title ?? "নাম নেই";
 
-  const price =
-    product.today ?? product.priceBn ?? product.price;
+  const price = product.today ?? product.priceBn ?? product.price;
 
   const change = getChange(product);
   const direction = getDirection(product);
@@ -225,23 +212,26 @@ export default function GroceryCard({
   return (
     <article className="card h-full overflow-hidden border border-base-300 bg-base-100 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg">
       <figure className="relative flex h-44 items-center justify-center overflow-hidden bg-base-200">
-        {imageUrl ? (
-          <img
+        {imageUrl && (
+          <Image
             src={imageUrl}
             alt={String(name)}
-            loading="lazy"
+            fill
+            sizes="(max-width: 768px) 50vw, 25vw"
+            className="object-contain p-3"
             onError={(event) => {
               event.currentTarget.style.display = "none";
-              const fallback =
-                event.currentTarget.parentElement?.querySelector(
-                  "[data-emoji-fallback]"
-                ) as HTMLElement | null;
 
-              if (fallback) fallback.style.display = "flex";
+              const fallback = event.currentTarget.parentElement?.querySelector(
+                "[data-emoji-fallback]",
+              ) as HTMLElement | null;
+
+              if (fallback) {
+                fallback.style.display = "flex";
+              }
             }}
-            className="h-full w-full object-contain p-3"
           />
-        ) : null}
+        )}
 
         <span
           data-emoji-fallback
@@ -299,7 +289,8 @@ export default function GroceryCard({
             পরিবর্তন: {change > 0 ? "+" : ""}
             {new Intl.NumberFormat("bn-BD", {
               maximumFractionDigits: 2,
-            }).format(change)}%
+            }).format(change)}
+            %
           </p>
         )}
 

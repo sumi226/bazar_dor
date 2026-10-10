@@ -5,23 +5,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 interface Category {
-  id: string | number ;
+  id: string | number;
   slug: string;
   icon?: string;
   nameBn: string;
 }
 
 interface NavLinksProps {
-  categories: Category[];
+  categories?: Category[];
 }
 
-const NavLinks = ({ categories }: NavLinksProps) => {
+const NavLinks = ({ categories = [] }: NavLinksProps) => {
   const pathname = usePathname();
-
+  
   return (
-    <nav className="border-t border-gray-100 ">
+    <nav className="border-t border-gray-100">
       <div className="mx-auto flex max-w-4xl bg-emerald-100 m-10 shadow-xl rounded-2xl items-center justify-center gap-2 overflow-x-auto px-4 py-3">
-        {/* Categories */}
         {categories.map((category) => {
           const isActive = pathname === `/category/${category.slug}`;
 
@@ -36,7 +35,6 @@ const NavLinks = ({ categories }: NavLinksProps) => {
               }`}
             >
               {category.icon && <span>{category.icon}</span>}
-
               <span>{category.nameBn}</span>
             </Link>
           );

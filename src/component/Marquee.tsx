@@ -1,8 +1,9 @@
 
+
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image"
+import Image from "next/image";
 
 export interface Product {
   id?: string | number;
@@ -21,8 +22,10 @@ export interface Product {
 
 type Obj = Record<string, unknown>;
 
-const API_URL =
-  "https://api.api-store.workers.dev/api/bazardor/products";
+const BASE_URL_1 = "https://api.api-store.workers.dev/api/bazardor";
+const BASE_URL_2 = "https://api.abcz.workers.dev/api/bazardor";
+
+const API_URLS = [`${BASE_URL_1}/products`, `${BASE_URL_2}/products`];
 
 function isObject(value: unknown): value is Obj {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -30,8 +33,7 @@ function isObject(value: unknown): value is Obj {
 
 function firstValue(...values: unknown[]): unknown {
   return values.find(
-    (value) =>
-      value !== undefined && value !== null && value !== "",
+    (value) => value !== undefined && value !== null && value !== "",
   );
 }
 
@@ -59,8 +61,14 @@ function read(obj: Obj, paths: string[]): unknown {
 }
 
 function asText(value: unknown): string | undefined {
-  if (typeof value === "string" && value.trim()) return value;
-  if (typeof value === "number") return String(value);
+  if (typeof value === "string" && value.trim()) {
+    return value;
+  }
+
+  if (typeof value === "number") {
+    return String(value);
+  }
+
   return undefined;
 }
 
@@ -95,46 +103,41 @@ function getProducts(data: unknown): Product[] {
 
           const today = firstValue(
             priceValue,
-            typeof item.price === "number" ||
-              typeof item.price === "string"
+            typeof item.price === "number" || typeof item.price === "string"
               ? item.price
               : undefined,
           );
 
-          const pct = firstValue(
-            read(item, [
-              "pct",
-              "percent",
-              "percentage",
-              "changePercent",
-              "change_percent",
-              "changePercentage",
-              "change_percentage",
-              "priceChangePercent",
-              "price_change_percent",
-              "change.pct",
-              "change.percent",
-              "change.percentage",
-              "priceChange.percent",
-              "price_change.percent",
-            ]),
-          );
+          const pct = read(item, [
+            "pct",
+            "percent",
+            "percentage",
+            "changePercent",
+            "change_percent",
+            "changePercentage",
+            "change_percentage",
+            "priceChangePercent",
+            "price_change_percent",
+            "change.pct",
+            "change.percent",
+            "change.percentage",
+            "priceChange.percent",
+            "price_change.percent",
+          ]);
 
-          const dir = firstValue(
-            read(item, [
-              "dir",
-              "direction",
-              "trend",
-              "priceDirection",
-              "price_direction",
-              "change.direction",
-              "priceChange.direction",
-            ]),
-          );
+          const dir = read(item, [
+            "dir",
+            "direction",
+            "trend",
+            "priceDirection",
+            "price_direction",
+            "change.direction",
+            "priceChange.direction",
+          ]);
 
           return {
             ...item,
-            id: asText(firstValue(item.id, item._id)),
+            id: firstValue(item.id, item._id) as string | number | undefined,
             nameBn:
               asText(
                 firstValue(
@@ -175,7 +178,9 @@ function getProducts(data: unknown): Product[] {
             icon: asText(item.icon),
           };
         })
-        .filter((product) => product.nameBn !== "পণ্য" || Boolean(product.name));
+        .filter(
+          (product) => product.nameBn !== "পণ্য" || Boolean(product.name),
+        );
     }
 
     if (!isObject(value)) return [];
@@ -195,7 +200,9 @@ function getProducts(data: unknown): Product[] {
 }
 
 function toNumber(value: unknown): number | null {
-  if (value === null || value === undefined || value === "") return null;
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
 
   if (isObject(value)) {
     return toNumber(
@@ -210,10 +217,14 @@ function toNumber(value: unknown): number | null {
 }
 
 function directionOf(dir: unknown, pct: number | null) {
-  const value = String(dir ?? "").trim().toLowerCase();
+  const value = String(dir ?? "")
+    .trim()
+    .toLowerCase();
 
   if (
-    ["up", "rise", "increase", "increased", "↑", "1", "বৃদ্ধি"].includes(value) ||
+    ["up", "rise", "increase", "increased", "↑", "1", "বৃদ্ধি"].includes(
+      value,
+    ) ||
     value.includes("increase") ||
     value.includes("up")
   ) {
@@ -221,7 +232,16 @@ function directionOf(dir: unknown, pct: number | null) {
   }
 
   if (
-    ["down", "fall", "decrease", "decreased", "↓", "-1", "কমেছে", "হ্রাস"].includes(value) ||
+    [
+      "down",
+      "fall",
+      "decrease",
+      "decreased",
+      "↓",
+      "-1",
+      "কমেছে",
+      "হ্রাস",
+    ].includes(value) ||
     value.includes("decrease") ||
     value.includes("down")
   ) {
@@ -249,10 +269,7 @@ function PriceItem({ product }: { product: Product }) {
   const direction = directionOf(product.dir, pct);
 
   const visual =
-    product.categoryIcon ||
-    product.image ||
-    product.emoji ||
-    product.icon;
+    product.categoryIcon || product.image || product.emoji || product.icon;
 
   return (
     <div className="marquee-item">
@@ -261,13 +278,12 @@ function PriceItem({ product }: { product: Product }) {
           <Image
             src={visual}
             alt=""
+            width={32}
+            height={32}
             className="marquee-product-image"
-              onError={(event) => {
-                event.currentTarget.style.display = "none";
-              }}
+            unoptimized
           />
         ) : (
-         
           visual || "🛒"
         )}
       </span>
@@ -302,6 +318,7 @@ export default function Marquee({
   const [products, setProducts] = useState<Product[]>(() =>
     getProducts(initialProducts),
   );
+
   const [loading, setLoading] = useState(initialProducts.length === 0);
   const [error, setError] = useState("");
 
@@ -311,43 +328,56 @@ export default function Marquee({
 
     async function load() {
       controller?.abort();
+
       const current = new AbortController();
       controller = current;
 
       try {
-        const response = await fetch(API_URL, {
-          cache: "no-store",
-          signal: current.signal,
-        });
+        let lastError = "দুটি API থেকেই তথ্য পাওয়া যায়নি";
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
+        for (const url of API_URLS) {
+          if (!active || current.signal.aborted) return;
+
+          try {
+            const response = await fetch(url, {
+              cache: "no-store",
+              signal: current.signal,
+            });
+
+            if (!response.ok) {
+              lastError = `HTTP ${response.status}`;
+              continue;
+            }
+
+            const json: unknown = await response.json();
+            const list = getProducts(json);
+
+            if (list.length === 0) {
+              lastError = "API response-এ product পাওয়া যায়নি";
+              continue;
+            }
+
+            if (active) {
+              setProducts(list);
+              setError("");
+            }
+
+            return;
+          } catch (error) {
+            if (
+              !active ||
+              current.signal.aborted ||
+              (error instanceof Error && error.name === "AbortError")
+            ) {
+              return;
+            }
+
+            lastError =
+              error instanceof Error ? error.message : "তথ্য লোড হয়নি";
+          }
         }
 
-        const json: unknown = await response.json();
-        const list = getProducts(json);
-
-        if (!list.length) {
-          console.error("Unexpected products API response:", json);
-          throw new Error("API response-এ product পাওয়া যায়নি");
-        }
-
-        if (active) {
-          setProducts(list);
-          setError("");
-        }
-      } catch (error: unknown) {
-        if (
-          !active ||
-          (error instanceof Error && error.name === "AbortError")
-        ) {
-          return;
-        }
-
-        setError(
-          error instanceof Error ? error.message : "তথ্য লোড হয়নি",
-        );
-        console.error("Marquee API error:", error);
+        if (active) setError(lastError);
       } finally {
         if (active) setLoading(false);
       }
@@ -369,9 +399,7 @@ export default function Marquee({
   if (!products.length) {
     return (
       <div className="marquee-container px-4 py-3 text-sm text-gray-600">
-        {loading
-          ? "বাজারদর লোড হচ্ছে..."
-          : error || "বাজারদর পাওয়া যায়নি"}
+        {loading ? "বাজারদর লোড হচ্ছে..." : error || "বাজারদর পাওয়া যায়নি"}
       </div>
     );
   }
@@ -386,11 +414,7 @@ export default function Marquee({
 
       <div className="marquee-track">
         {[0, 1].map((copy) => (
-          <div
-            className="marquee-group"
-            key={copy}
-            aria-hidden={copy === 1}
-          >
+          <div className="marquee-group" key={copy} aria-hidden={copy === 1}>
             {products.map((product, index) => (
               <PriceItem
                 key={`${copy}-${product.id ?? product.nameBn ?? index}`}

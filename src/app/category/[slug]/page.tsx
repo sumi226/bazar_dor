@@ -7,8 +7,24 @@ import { useParams } from "next/navigation";
 import ProductGrid from "@/component/ProductGrid";
 import type { Product } from "@/component/GroceryCard";
 
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+
+const session = await auth.api.getSession({
+  headers: await headers(),
+});
+
+if (!session?.user) {
+  redirect("/signin");
+}
+
+
 const API_URL =
+ 
+  "https://openapi.programming-hero.com/api/bazardor";
   "https://api.api-store.workers.dev/api/bazardor";
+  "https://api.abcz.workers.dev/api/bazardor";
 
 type SortOption = "default" | "low" | "high";
 
@@ -97,7 +113,6 @@ export default function CategoryPage() {
               cache: "no-store",
             }),
           ]);
-
         if (
           !categoriesResponse.ok ||
           !productsResponse.ok
